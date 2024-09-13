@@ -80,6 +80,7 @@ class Red_Redirects_File extends Red_FileIO {
 
 		switch ( $match_type ) {
 			case 'cookie':
+				// ref: https://docs.netlify.com/routing/redirects/redirect-options/#redirect-by-cookie-presence
 				trigger_error( "Degraded Cookie conversion, _redirects only supports cookie presence." , E_USER_NOTICE );
 
 				return array(
@@ -179,6 +180,12 @@ class Red_Redirects_File extends Red_FileIO {
 		$extra = join( ' ', array_map( function ( string $key, array $value ) {
 			return ucfirst( $key ) . '=' . join( ',', array_map( 'rawurlencode', $value ) );
 		}, array_keys( $extra ), $extra ) );
+
+		if ( ! $code ) {
+			trigger_error( "Invalid code $code for [$source -> $target], using 200 instead", E_USER_WARNING );
+
+			$code = '200';
+		}
 
 		// Force redirect is not supported yet
 		// ref: https://docs.netlify.com/routing/redirects/redirect-options/#force-redirects
