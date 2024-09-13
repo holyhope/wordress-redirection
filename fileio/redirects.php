@@ -180,7 +180,15 @@ class Red_Redirects_File extends Red_FileIO {
 			return ucfirst( $key ) . '=' . join( ',', array_map( 'rawurlencode', $value ) );
 		}, array_keys( $extra ), $extra ) );
 
-		return array( $this->encode( $source ), $params_str, $this->encode( $target ), $code . '!', $extra, $title ? "# $title" : '');
+		// Force redirect is not supported yet
+		// ref: https://docs.netlify.com/routing/redirects/redirect-options/#force-redirects
+		/**
+		 * if ( $force_redirect ) {
+		 * 	$code .= '!';
+		 * }
+		 */
+
+		return array( $this->encode( $source ), $params_str, $this->encode( $target ), $code, $extra, $title ? "# $title" : '');
 	}
 
 	private function encode( string $url ) {
@@ -192,7 +200,7 @@ class Red_Redirects_File extends Red_FileIO {
 	private function extract_query_params( string &$url ) {
 		$component = parse_url( $url );
 		if ( ! $component ) {
-			trigger_error( "Invalid source URL $source in item $id", E_USER_ERROR );
+			trigger_error( "Invalid URL $url", E_USER_ERROR );
 
 			return array( $url, array() );
 		}
